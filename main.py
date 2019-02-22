@@ -1,6 +1,8 @@
 from selenium import webdriver
 import csv
+
 p = []
+errorcount = 0
 
 def get_list():
     id_list = []
@@ -32,14 +34,14 @@ get_list()
 driver = webdriver.Chrome("C:/Users/Dan/AppData/Local/Programs/Python/Python36/Lib/site-packages/selenium/webdriver/chrome/chromedriver.exe")  # Optional argument, if not specified will search path.
 driver.get("https://duckduckgo.com");
 
-errorcount = 0
 text_file = open("Songs.txt","w")
+
 for i in range(0, len(p)):
     uncut = getname(p[i])
     try:
         song = uncut.split(", a song by ")[0]
         artist = uncut.split(", a song by ")[1].split(" on Spotify")[0]
-        print("{0} - {1}".format(artist,song))
+        print(f"{artist} - {song}")
         text_file.write(f"{artist} - {song}\n")
     except:
         print("Error")
@@ -47,5 +49,4 @@ for i in range(0, len(p)):
 
 text_file.write(f"Errors: {errorcount}")
 text_file.close()
-
 driver.quit()
