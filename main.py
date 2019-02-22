@@ -1,6 +1,7 @@
 from selenium import webdriver
 import csv
 p = []
+
 def get_list():
     id_list = []
     with open('list.csv') as csvDataFile:
@@ -14,49 +15,37 @@ def get_list():
         p.append(t[4])
     return p
 
-
-
 def getname(id):
     search_box = driver.find_element_by_name('q')
     search_box.clear()
     search_box.send_keys(id)
     search_box.submit()
     try:
-        #link = driver.find_element_by_partial_link_text(", a song by ")
-        link = find_elements_by_class_name("react-contextmenu-wrapper//span")
-        #link = driver.find_elements_by_xpath("//h2//a")
+        link = driver.find_element_by_partial_link_text(", a song by ")
         inner = link.get_attribute('innerHTML')
         return inner
     except:
-        return "error"
+        return
 
+get_list()
 
+driver = webdriver.Chrome("C:/Users/Dan/AppData/Local/Programs/Python/Python36/Lib/site-packages/selenium/webdriver/chrome/chromedriver.exe")  # Optional argument, if not specified will search path.
+driver.get("https://duckduckgo.com");
 
-#get_list()
+errorcount = 0
+text_file = open("Songs.txt","w")
+for i in range(0, len(p)):
+    uncut = getname(p[i])
+    try:
+        song = uncut.split(", a song by ")[0]
+        artist = uncut.split(", a song by ")[1].split(" on Spotify")[0]
+        print("{0} - {1}".format(artist,song))
+        text_file.write(f"{artist} - {song}\n")
+    except:
+        print("Error")
+        errorcount += 1
 
-links = []
-with open('list.csv') as csvDataFile:
-    csvReader = csv.reader(csvDataFile)
-    for row in csvReader:
-        links.append(row)
-print(links)
+text_file.write(f"Errors: {errorcount}")
+text_file.close()
 
-
-driver = webdriver.Chrome()  # Optional argument, if not specified will search path.
-#driver.get("https://duckduckgo.com");
-for i in range(0,len(links)):
-    driver.get(links[i][0])
-
-
-#for i in range(0, len(p)):
-#    name = getname(p[i])
-#    print(name)
-
-#search_box.send_keys('5gPfWWQrehelkcNTuU1ph2')
-#search_box.submit()
-#link = driver.find_element_by_partial_link_text("Spotify")
-#name = link.get_attribute('innerHTML')
-#print(name)
-try:
-    driver.quit()
-except: print("aleardy closed")
+driver.quit()
